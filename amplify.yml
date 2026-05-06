@@ -6,9 +6,9 @@ frontend:
         - npm ci
     build:
       commands:
-        - echo "No build step required for Express"
+        - npm run build
   artifacts:
-    baseDirectory: /
+    baseDirectory: .amplify-hosting
     files:
       - '**/*'
   cache:

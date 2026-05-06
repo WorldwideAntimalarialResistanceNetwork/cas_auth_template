@@ -12,7 +12,7 @@
  * - Start the HTTP server on PORT.
  *
  * Important environment variables
- * - PORT: Port to listen on.
+ * - APP_PORT: Optional local port override. Amplify Compute expects port 3000.
  * - APP_BASE_PATH: Base URL path the app is mounted under (e.g., "/app").
  * - SESSION_SECRET: Secret for express-session.
  * - CAS_URL: Base URL of the CAS server.
@@ -77,9 +77,10 @@ app.use((req, res, next) => {
 
 
 // Routes, passing CAS and S3
-app.use(process.env.APP_BASE_PATH, indexRouter(cas, s3));
+const appBasePath = process.env.APP_BASE_PATH || '/';
+app.use(appBasePath, indexRouter(cas, s3));
 
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.APP_PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });

@@ -10,10 +10,10 @@ You MUST configure the following environment variables in the Amplify Console (*
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `PORT` | The port the app listens on | `8080` (Amplify usually uses 8080 for dynamic apps) |
-| `APP_BASE_PATH` | Base URL path | `/sdtmrule` |
+| `APP_PORT` | Optional local-only override. Do not use `PORT=8080` in Amplify; Amplify Compute expects port `3000`. | `3000` |
+| `APP_BASE_PATH` | Base URL path | `/` or `/sdtmrule` |
 | `CAS_URL` | Your CAS server URL | `https://login.wwarn.org/cas` |
-| `SERVICE_URL` | Public URL of this app | `https://your-app.amplifyapp.com` |
+| `SERVICE_URL` | Public URL of this app, without an internal port | `https://main.di5repg4hfjgu.amplifyapp.com` |
 | `SESSION_SECRET` | Secret for sessions | `your-random-secret` |
 | `IDDO_AWS_ACCESS_KEY_ID` | AWS Access Key | (If not using IAM roles) |
 | `IDDO_AWS_SECRET_ACCESS_KEY` | AWS Secret Key | (If not using IAM roles) |
@@ -27,7 +27,8 @@ You MUST configure the following environment variables in the Amplify Console (*
 4. Select **GitHub** and authorize.
 5. Select the `cas_auth_template` repository and the branch.
 6. Amplify should automatically detect the `amplify.yml` file.
-7. **Important**: If you are using Amplify Gen 1 or Gen 2 for dynamic hosting, ensure the "Build settings" reflect that this is a dynamic application.
+7. The build runs `npm run build`, which creates the `.amplify-hosting` bundle required by Amplify Hosting Compute.
+8. After deployment, test the default Amplify URL without adding `:8080`, for example `https://main.di5repg4hfjgu.amplifyapp.com/`.
 
 ### 4. Note on Dynamic vs Static
 AWS Amplify Hosting is traditionally for Static Site Generation (SSG) and Server-Side Rendering (SSR) frameworks like Next.js. For a pure Express app:
