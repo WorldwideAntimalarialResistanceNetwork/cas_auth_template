@@ -1,0 +1,27 @@
+version: '3'
+
+services:
+  web:
+    build: .
+#    ports:
+#      - "8844:3001"
+    env_file:
+      - .env
+    volumes:
+      - .:/app
+      - /app/node_modules
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    network_mode: host
+
+
+    sssversion: '3.8'
+
+    services:
+      mysql-client:
+        image: mysql:8.0
+        container_name: mysql-client
+        network_mode: host  # Shares host network (no NAT, direct host access)
+        command: [ "sleep", "infinity" ]  # Keeps container running
+        tty: true
+        stdin_open: true  # Ensures interactive shell works

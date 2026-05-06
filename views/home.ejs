@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CAS</title>
+    <style>
+        .user-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+    </style>
+</head>
+<body>
+<!-- User info in top right -->
+<div class="user-info">
+    <% if (user) { %>
+        <span>Welcome, <strong><%= user %></strong></span>
+        <a href="<%= basePath %>/logout" class="logout-btn">Logout</a>
+    <% } %>
+</div>
+
+
+
+</body>
+</html>

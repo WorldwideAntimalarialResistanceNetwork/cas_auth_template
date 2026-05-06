@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Rules Dashboard</title>
+    <style>
+        .user-info {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background: #f5f5f5;
+            padding: 10px 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .rules-container {
+            max-width: 1200px;
+            margin: 70px auto 20px;
+            padding: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .logout-btn {
+            background: #f44336;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-left: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .filename-link {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .filename-badge:hover {
+            background: #455a64;
+            cursor: pointer;
+        }
+
+        .logout-btn:hover {
+            background: #d32f2f;
+        }
+
+        .add-rule-btn {
+            background: #2196F3;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .add-rule-btn:hover {
+            background: #0b7dda;
+        }
+
+        .filename-badge {
+            background: #607d8b;
+            color: white;
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.8em;
+        }
+
+        /* Add these new styles */
+        .status-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-running {
+            background-color: #FFF3CD;
+            color: #856404;
+        }
+
+        .status-completed {
+            background-color: #D4EDDA;
+            color: #155724;
+        }
+
+        .status-failed {
+            background-color: #F8D7DA;
+            color: #721C24;
+        }
+
+        .status-pending {
+            background-color: #E2E3E5;
+            color: #383D41;
+        }
+
+        .run-all-btn {
+            padding: 10px 15px;
+            background: #FF9800;
+            color: white;
+            border-radius: 4px;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+
+        .run-all-btn:hover {
+            background: #F57C00;
+        }
+    </style>
+</head>
+<body>
+<!-- User info in top right -->
+<div class="user-info">
+    <% if (user) { %>
+        <span>Welcome, <strong><%= user %></strong></span>
+        <a href="<%= basePath %>/logout" class="logout-btn">Logout</a>
+    <% } %>
+</div>
+
+<!-- Main content -->
+<div class="rules-container">
+    <h1>Rules Management System</h1>
+    <h4>Currently, only DM and VS have data in the database. However, you can import additional data via:
+        http://dev.wwarn.org:8080/sdtm-repo-uploader</h4>
+    <h5>All rules created here will be automatically executed by the SDTM Repo Uploader.</h5>
+    <div class="domain-search" style="margin: 20px 0;">
+        <form method="GET" action="<%= basePath %>/rules/" id="domainForm">
+            <input
+                    type="text"
+                    name="domain"
+                    id="domainInput"
+                    placeholder="Enter domain name (e.g., DM, VS)"
+                    required
+                    style="padding: 8px; width: 200px;"
+            >
+            <button
+                    type="submit"
+                    style="padding: 8px 15px; background: #4CAF50; color: white; border: none; cursor: pointer;"
+            >
+                View/Edit Rules
+            </button>
+        </form>
+    </div>
+
+    <div style="margin: 20px 0;">
+        <a href="<%= basePath %>/runall" class="run-all-btn">Run All Rules (not completed)</a>
+    </div>
+
+    <% if (rules.length > 0) { %>
+        <table>
+            <thead>
+            <tr>
+                <th>ID</th>
+                <th>Rule</th>
+                <th>Domain</th>
+                <th>Status</th>
+                <th>Last Execution</th>
+            </tr>
+            </thead>
+            <tbody>
+            <% rules.forEach(rule => { %>
+                <tr>
+                    <td><%= rule.id %></td>
+                    <td><%= rule.rule %></td>
+                    <td>
+                        <a href="<%= basePath %>/rules/<%= rule.domain %>" class="filename-link">
+                            <span class="filename-badge"><%= rule.domain %></span>
+                        </a>
+                    </td>
+                    <td>
+                        <% if (rule.execution_status === 'running') { %>
+                            <span class="status-badge status-running">◷ Running</span>
+                        <% } else if (rule.execution_status === 'completed') { %>
+                            <span class="status-badge status-completed">✓ Completed</span>
+                            <% if (rule.rows_affected !== undefined) { %>
+                                <div style="font-size: 0.8em; color: #666;">
+                                    <%= rule.rows_affected %> rows
+                                </div>
+                            <% } %>
+                        <% } else if (rule.execution_status === 'failed') { %>
+                            <span class="status-badge status-failed">✖ Failed</span>
+                        <% } else { %>
+                            <span class="status-badge status-pending">Pending</span>
+                        <% } %>
+                    </td>
+                    <td><%= rule.formattedTime %></td>
+                </tr>
+            <% }); %>
+            </tbody>
+        </table>
+    <% } else { %>
+        <p>No rules found in any files.</p>
+    <% } %>
+</div>
+
+<script>
+    // Previous JavaScript remains the same
+    document.getElementById('domainForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const domain = document.getElementById('domainInput').value.trim();
+        if (domain) {
+            window.location.href = `<%= basePath %>/rules/${encodeURIComponent(domain)}`;
+        }
+    });
+</script>
+</body>
+</html>
