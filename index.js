@@ -20,8 +20,6 @@
  * - AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY, AWS_REGION: AWS credentials/region.
  * - S3_BUCKET_NAME: Name of the S3 bucket that stores rule files (used by routes).
  */
-require('dotenv').config();
-
 const express = require('express');
 const session = require('express-session');
 const CASAuthentication = require('@keepsolutions/cas-authentication');
@@ -29,6 +27,15 @@ const path = require('path');
 const indexRouter = require('./routes/index');
 const bodyParser = require('body-parser');
 const AWS = require('aws-sdk');
+
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
+const requiredEnv = ['SESSION_SECRET', 'CAS_URL', 'SERVICE_URL'];
+const missingEnv = requiredEnv.filter((name) => !process.env[name]);
+
+if (missingEnv.length > 0) {
+  throw new Error(`Missing required environment variables: ${missingEnv.join(', ')}`);
+}
 
 const app = express();
 
@@ -48,11 +55,16 @@ app.use(session({
 
 
 
-const s3 = new AWS.S3({
-  accessKeyId: process.env.IDDO_AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.IDDO_AWS_SECRET_ACCESS_KEY,
+const s3Options = {
   region: process.env.IDDO_AWS_REGION
-});
+};
+
+if (process.env.IDDO_AWS_ACCESS_KEY_ID && process.env.IDDO_AWS_SECRET_ACCESS_KEY) {
+  s3Options.accessKeyId = process.env.IDDO_AWS_ACCESS_KEY_ID;
+  s3Options.secretAccessKey = process.env.IDDO_AWS_SECRET_ACCESS_KEY;
+}
+
+const s3 = new AWS.S3(s3Options);
 
 // CAS setup with .env variables
 const cas = new CASAuthentication({

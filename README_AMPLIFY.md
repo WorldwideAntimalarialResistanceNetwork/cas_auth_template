@@ -10,7 +10,7 @@ You MUST configure the following environment variables in the Amplify Console (*
 
 | Variable | Description | Example |
 |----------|-------------|---------|
-| `APP_PORT` | Optional local-only override. Do not use `PORT=8080` in Amplify; Amplify Compute expects port `3000`. | `3000` |
+| `APP_PORT` | Optional local-only override. Do not configure this in Amplify; Amplify Compute expects port `3000`. | `3000` |
 | `APP_BASE_PATH` | Base URL path | `/` or `/sdtmrule` |
 | `CAS_URL` | Your CAS server URL | `https://login.wwarn.org/cas` |
 | `SERVICE_URL` | Public URL of this app, without an internal port | `https://main.di5repg4hfjgu.amplifyapp.com` |
@@ -28,7 +28,13 @@ You MUST configure the following environment variables in the Amplify Console (*
 5. Select the `cas_auth_template` repository and the branch.
 6. Amplify should automatically detect the `amplify.yml` file.
 7. The build runs `npm run build`, which creates the `.amplify-hosting` bundle required by Amplify Hosting Compute.
+   During this build, `scripts/build-amplify.js` writes the selected Amplify environment variables into `.amplify-hosting/compute/default/.env` so the Express runtime can read them with `dotenv`.
 8. After deployment, test the default Amplify URL without adding `:8080`, for example `https://main.di5repg4hfjgu.amplifyapp.com/`.
+
+### 3.1 Runtime Environment Variables
+Amplify Hosting exposes console environment variables to the build phase. For this Express Compute bundle, the build script copies only the variables listed above, except `APP_PORT`, into the runtime `.env` file.
+
+Do not print these values in build logs. For long-term production use, prefer IAM roles for S3 access instead of deploying static AWS access keys in an artifact.
 
 ### 4. Note on Dynamic vs Static
 AWS Amplify Hosting is traditionally for Static Site Generation (SSG) and Server-Side Rendering (SSR) frameworks like Next.js. For a pure Express app:
