@@ -15,9 +15,9 @@ You MUST configure the following environment variables in the Amplify Console (*
 | `CAS_URL` | Your CAS server URL | `https://login.wwarn.org/cas` |
 | `SERVICE_URL` | Public URL of this app | `https://your-app.amplifyapp.com` |
 | `SESSION_SECRET` | Secret for sessions | `your-random-secret` |
-| `AWS_ACCESS_KEY_ID` | AWS Access Key | (If not using IAM roles) |
-| `AWS_SECRET_ACCESS_KEY` | AWS Secret Key | (If not using IAM roles) |
-| `AWS_REGION` | AWS Region | `eu-west-2` |
+| `IDDO_AWS_ACCESS_KEY_ID` | AWS Access Key | (If not using IAM roles) |
+| `IDDO_AWS_SECRET_ACCESS_KEY` | AWS Secret Key | (If not using IAM roles) |
+| `IDDO_AWS_REGION` | AWS Region | `eu-west-2` |
 | `S3_BUCKET_NAME` | S3 Bucket name | `iddo-rules-sdtm` |
 
 ### 3. Deployment Steps
